@@ -1,0 +1,34 @@
+version: '2.4'
+services:
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+    ports:
+      - 3000:3000
+  api:
+    build: 
+      context: ./api
+      dockerfile: Dockerfile
+    volumes:
+      - ./api/src:/app/src
+    ports:
+      - 3001:80
+  db:
+    image: mongo
+    volumes:
+      - dbtest:/data/db
+  reverse-proxy:
+    build:
+      context: ./reverse-proxy
+      dockerfile: Dockerfile.dev
+    ports:
+      - 80:80
+    depends_on:
+      - api
+      - db
+volumes:
+  dbtest:
